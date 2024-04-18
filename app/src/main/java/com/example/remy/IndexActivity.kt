@@ -1,5 +1,6 @@
 package com.example.remy
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.ListView
@@ -43,11 +44,11 @@ class IndexActivity : AppCompatActivity() {
         val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, reminders)
         listView.adapter = adapter
 
-        // adicionar um listener para o evento de clique em um item da lista
         listView.setOnItemClickListener { _, _, position, _ ->
             val reminder = reminders[position]
-            // abrir a tela de detalhes do reminder
-            Toast.makeText(this, reminder.toString(), Toast.LENGTH_SHORT).show()
+            val intent = Intent(this, ShowActivity::class.java)
+            intent.putExtra("id", reminder.id)
+            startActivity(intent)
         }
     }
 }
