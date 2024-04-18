@@ -1,7 +1,9 @@
 package com.example.remy
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.ListView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -22,32 +24,17 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        val reminderRepository = ReminderRepository(this)
-        val reminders = reminderRepository.index()
-        if (reminders.isEmpty()) {
-            val reminder = Reminder(
-                title = "Comprar pão",
-                description = "Pão francês",
-                date = "2021-09-01",
-                time = "08:00",
-                location = "Padaria",
-                latitude = -23.5505199,
-                longitude = -46.6333094
-            )
+        val btnIndex: Button = findViewById(R.id.index)
+        val btnCreate: Button = findViewById(R.id.create)
 
-            reminderRepository.create(reminder)
+        btnIndex.setOnClickListener {
+            val intent = Intent(this, IndexActivity::class.java)
+            startActivity(intent)
         }
 
-        // inserir os reminders.toArray() no ListView
-        val listView = findViewById<ListView>(R.id.listView)
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, reminders)
-        listView.adapter = adapter
-
-        // adicionar um listener para o evento de clique em um item da lista
-        listView.setOnItemClickListener { _, _, position, _ ->
-            val reminder = reminders[position]
-            // abrir a tela de detalhes do reminder
-            Toast.makeText(this, reminder.toString(), Toast.LENGTH_SHORT).show()
+        btnCreate.setOnClickListener {
+            val intent = Intent(this, CreateActivity::class.java)
+            startActivity(intent)
         }
     }
 }
