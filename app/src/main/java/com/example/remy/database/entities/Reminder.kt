@@ -23,4 +23,8 @@ data class Reminder(
     ) : this(title, description, date, time, location, latitude, longitude) {
         this.id = id
     }
+
+    override fun toString(): String {
+        return "Reminder(id=$id, title='$title', description='$description', date='$date', time='$time', location='$location', latitude=$latitude, longitude=$longitude)"
+    }
 }
