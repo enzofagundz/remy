@@ -3,4 +3,5 @@
     <string name="text_index_button">Ver meus lembretes</string>
     <string name="text_create_button">Criar um novo lembrete</string>
     <string name="title_activity_index">Meus lembretes</string>
+    <string name="title_activity_maps">MapsActivity</string>
 </resources>

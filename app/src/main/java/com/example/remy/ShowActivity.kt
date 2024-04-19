@@ -7,9 +7,20 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.remy.database.entities.Reminder
 import com.example.remy.repository.ReminderRepository
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 
-class ShowActivity : AppCompatActivity() {
+class ShowActivity : AppCompatActivity(), OnMapReadyCallback {
+
+    private lateinit var mMap: GoogleMap
+    private var reminder: Reminder? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -26,7 +37,11 @@ class ShowActivity : AppCompatActivity() {
 
         // exibir os dados do reminder na tela
         val reminderRepository = ReminderRepository(this)
-        val reminder = reminderRepository.show(id)
+        reminder = reminderRepository.show(id)
+
+        // inicializar o mapa
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.getMapAsync(this)
 
         val title = findViewById<TextView>(R.id.title)
         val description = findViewById<TextView>(R.id.description)
@@ -58,6 +73,17 @@ class ShowActivity : AppCompatActivity() {
             finish()
             val intent = Intent(this, IndexActivity::class.java)
             startActivity(intent)
+        }
+    }
+
+    override fun onMapReady(googleMap: GoogleMap) {
+        mMap = googleMap
+
+        // Adicionar marcador ao mapa com a latitude e longitude do reminder
+        reminder?.let {
+            val reminderLocation = LatLng(it.latitude, it.longitude)
+            mMap.addMarker(MarkerOptions().position(reminderLocation))
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(reminderLocation, 15f))
         }
     }
 }

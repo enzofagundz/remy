@@ -10,8 +10,17 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.remy.database.entities.Reminder
 import com.example.remy.repository.ReminderRepository
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.MarkerOptions
 
-class CreateActivity : AppCompatActivity() {
+class CreateActivity : AppCompatActivity(), OnMapReadyCallback {
+
+    private var mMap: GoogleMap? = null
+    private var selectedLatLng: LatLng? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -22,6 +31,10 @@ class CreateActivity : AppCompatActivity() {
             insets
         }
 
+        // inicializar o mapa
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.getMapAsync(this)
+
         val btnCreate = findViewById<Button>(R.id.create)
         btnCreate.setOnClickListener {
             // criar um reminder
@@ -30,8 +43,10 @@ class CreateActivity : AppCompatActivity() {
             val date = findViewById<EditText>(R.id.date).text.toString()
             val time = findViewById<EditText>(R.id.time).text.toString()
             val location = findViewById<EditText>(R.id.location).text.toString()
-            val latitude = findViewById<EditText>(R.id.latitude).text.toString().toDouble()
-            val longitude = findViewById<EditText>(R.id.longitude).text.toString().toDouble()
+//            val latitude = findViewById<EditText>(R.id.latitude).text.toString().toDouble()
+//            val longitude = findViewById<EditText>(R.id.longitude).text.toString().toDouble()
+            val latitude = selectedLatLng?.latitude ?: 0.0
+            val longitude = selectedLatLng?.longitude ?: 0.0
 
             // salvar o reminder no banco de dados
             val reminder = Reminder(
@@ -51,6 +66,15 @@ class CreateActivity : AppCompatActivity() {
             finish()
             val intent = Intent(this, IndexActivity::class.java)
             startActivity(intent)
+        }
+    }
+
+    override fun onMapReady(p0: GoogleMap) {
+        mMap = p0
+        mMap?.setOnMapClickListener { latLng ->
+            selectedLatLng = latLng
+            mMap?.clear()
+            mMap?.addMarker(MarkerOptions().position(latLng))
         }
     }
 }
