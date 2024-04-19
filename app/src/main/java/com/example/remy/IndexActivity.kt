@@ -11,6 +11,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.remy.database.entities.Reminder
 import com.example.remy.repository.ReminderRepository
+import com.example.remy.views.ReminderAdapter
 
 class IndexActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,7 +42,8 @@ class IndexActivity : AppCompatActivity() {
 
         // inserir os reminders.toArray() no ListView
         val listView = findViewById<ListView>(R.id.listView)
-        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, reminders)
+//        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, reminders)
+        val adapter = ReminderAdapter(this, reminders)
         listView.adapter = adapter
 
         listView.setOnItemClickListener { _, _, position, _ ->
