@@ -1,6 +1,5 @@
 package com.example.remy
 
-import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -44,10 +43,6 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback {
             val latitude = selectedLatLng?.latitude ?: 0.0
             val longitude = selectedLatLng?.longitude ?: 0.0
 
-            if (title.isEmpty() || description.isEmpty() || date.isEmpty() || time.isEmpty() || location.isEmpty()) {
-                return@setOnClickListener
-            }
-
             val reminder = Reminder(
                 title = title,
                 description = description,
@@ -61,19 +56,16 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback {
             val reminderRepository = ReminderRepository(this)
             reminderRepository.create(reminder)
 
-            // redirecionar para a tela de listagem
             finish()
-            val intent = Intent(this, IndexActivity::class.java)
-            startActivity(intent)
         }
     }
 
     override fun onMapReady(p0: GoogleMap) {
         mMap = p0
         mMap?.setOnMapClickListener { latLng ->
-            selectedLatLng = latLng
             mMap?.clear()
             mMap?.addMarker(MarkerOptions().position(latLng))
+            selectedLatLng = latLng
         }
     }
 }

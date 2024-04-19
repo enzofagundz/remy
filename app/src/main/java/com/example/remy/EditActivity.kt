@@ -15,12 +15,16 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
 
-
 class EditActivity : AppCompatActivity(), OnMapReadyCallback {
+
+    // Declaração das variáveis
     private lateinit var mMap: GoogleMap
     private var reminder: Reminder? = null
+    private var selectedLatLng: LatLng? = null
+    private var marker: Marker? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,15 +36,18 @@ class EditActivity : AppCompatActivity(), OnMapReadyCallback {
             insets
         }
 
+        // Inicialização do mapa
+        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+        mapFragment.getMapAsync(this)
+
+        // Obtenção dos dados do lembrete
         val id = intent.getIntExtra("id", 0)
         if (id == 0) finish()
 
         val reminderRepository = ReminderRepository(this)
         reminder = reminderRepository.show(id)
 
-        val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-        mapFragment.getMapAsync(this)
-
+        // Configuração dos campos de texto com os dados do lembrete
         val title = findViewById<EditText>(R.id.title)
         val description = findViewById<EditText>(R.id.description)
         val date = findViewById<EditText>(R.id.date)
@@ -53,13 +60,14 @@ class EditActivity : AppCompatActivity(), OnMapReadyCallback {
         time.setText(reminder?.time)
         location.setText(reminder?.location)
 
+        // Configuração do botão de salvar
         val btnSave = findViewById<Button>(R.id.save)
         btnSave.setOnClickListener {
-
             if (title.text.isEmpty() || description.text.isEmpty() || date.text.isEmpty() || time.text.isEmpty() || location.text.isEmpty()) {
                 return@setOnClickListener
             }
 
+            // Atualização dos dados do lembrete
             val updatedReminder = Reminder(
                 id,
                 title.text.toString(),
@@ -67,8 +75,8 @@ class EditActivity : AppCompatActivity(), OnMapReadyCallback {
                 date.text.toString(),
                 time.text.toString(),
                 location.text.toString(),
-                reminder?.latitude ?: 0.0,
-                reminder?.longitude ?: 0.0
+                selectedLatLng?.latitude ?: 0.0,
+                selectedLatLng?.longitude ?: 0.0
             )
             reminderRepository.update(updatedReminder)
             finish()
@@ -84,8 +92,17 @@ class EditActivity : AppCompatActivity(), OnMapReadyCallback {
         // Adicionar marcador ao mapa com a latitude e longitude do reminder
         reminder?.let {
             val reminderLocation = LatLng(it.latitude, it.longitude)
-            mMap.addMarker(MarkerOptions().position(reminderLocation))
+            marker = mMap.addMarker(MarkerOptions().position(reminderLocation))
             mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(reminderLocation, 15f))
+        }
+
+        // Configurar o listener de clique no mapa
+        mMap.setOnMapClickListener { latLng ->
+            // Atualizar a latitude e longitude selecionadas
+            selectedLatLng = latLng
+
+            // Atualizar a posição do marcador no mapa
+            marker?.position = latLng
         }
     }
 }
