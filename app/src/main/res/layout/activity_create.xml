@@ -71,22 +71,6 @@
             android:hint="Local"
             android:inputType="text" />
 
-<!--        <EditText-->
-<!--            android:id="@+id/latitude"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginBottom="16dp"-->
-<!--            android:hint="Latitude"-->
-<!--            android:inputType="numberSigned" />-->
-
-<!--        <EditText-->
-<!--            android:id="@+id/longitude"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginBottom="16dp"-->
-<!--            android:hint="Longitude"-->
-<!--            android:inputType="numberSigned" />-->
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

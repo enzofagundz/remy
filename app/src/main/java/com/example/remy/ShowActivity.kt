@@ -79,7 +79,7 @@ class ShowActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // Adicionar marcador ao mapa com a latitude e longitude do reminder
+
         reminder?.let {
             val reminderLocation = LatLng(it.latitude, it.longitude)
             mMap.addMarker(MarkerOptions().position(reminderLocation))
