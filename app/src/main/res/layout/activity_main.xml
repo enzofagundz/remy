@@ -19,11 +19,12 @@
         app:layout_constraintVertical_bias="0.022" />
 
     <LinearLayout
-        android:layout_width="409dp"
-        android:layout_height="659dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginStart="1dp"
         android:layout_marginEnd="1dp"
         android:layout_marginBottom="1dp"
+        android:padding="16dp"
         android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -33,13 +34,13 @@
 
         <Button
             android:id="@+id/index"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/text_index_button" />
 
         <Button
             android:id="@+id/create"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/text_create_button" />
 
