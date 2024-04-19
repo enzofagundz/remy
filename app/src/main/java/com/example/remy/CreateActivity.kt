@@ -31,24 +31,23 @@ class CreateActivity : AppCompatActivity(), OnMapReadyCallback {
             insets
         }
 
-        // inicializar o mapa
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
         val btnCreate = findViewById<Button>(R.id.create)
         btnCreate.setOnClickListener {
-            // criar um reminder
             val title = findViewById<EditText>(R.id.title).text.toString()
             val description = findViewById<EditText>(R.id.description).text.toString()
             val date = findViewById<EditText>(R.id.date).text.toString()
             val time = findViewById<EditText>(R.id.time).text.toString()
             val location = findViewById<EditText>(R.id.location).text.toString()
-//            val latitude = findViewById<EditText>(R.id.latitude).text.toString().toDouble()
-//            val longitude = findViewById<EditText>(R.id.longitude).text.toString().toDouble()
             val latitude = selectedLatLng?.latitude ?: 0.0
             val longitude = selectedLatLng?.longitude ?: 0.0
 
-            // salvar o reminder no banco de dados
+            if (title.isEmpty() || description.isEmpty() || date.isEmpty() || time.isEmpty() || location.isEmpty()) {
+                return@setOnClickListener
+            }
+
             val reminder = Reminder(
                 title = title,
                 description = description,

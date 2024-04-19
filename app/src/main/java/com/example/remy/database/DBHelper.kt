@@ -9,7 +9,7 @@ class DBHelper(context: Context) :
 
     companion object {
         const val DATABASE_NAME = "remy.db"
-        const val DATABASE_VERSION = 1
+        const val DATABASE_VERSION = 2
         const val SQL_CREATE_TABLE = """
             CREATE TABLE IF NOT EXISTS reminders (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,

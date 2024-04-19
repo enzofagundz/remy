@@ -35,15 +35,12 @@ class EditActivity : AppCompatActivity(), OnMapReadyCallback {
         val id = intent.getIntExtra("id", 0)
         if (id == 0) finish()
 
-        // recuperar o reminder pelo id
         val reminderRepository = ReminderRepository(this)
         reminder = reminderRepository.show(id)
 
-        // inicializar o mapa
         val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync(this)
 
-        // preencher os campos do formulário com os dados do reminder
         val title = findViewById<EditText>(R.id.title)
         val description = findViewById<EditText>(R.id.description)
         val date = findViewById<EditText>(R.id.date)
@@ -56,10 +53,13 @@ class EditActivity : AppCompatActivity(), OnMapReadyCallback {
         time.setText(reminder?.time)
         location.setText(reminder?.location)
 
-        // adicionar um listener para o evento de clique no botão de salvar
         val btnSave = findViewById<Button>(R.id.save)
         btnSave.setOnClickListener {
-            // atualizar o reminder com os dados do formulário
+
+            if (title.text.isEmpty() || description.text.isEmpty() || date.text.isEmpty() || time.text.isEmpty() || location.text.isEmpty()) {
+                return@setOnClickListener
+            }
+
             val updatedReminder = Reminder(
                 id,
                 title.text.toString(),
@@ -67,8 +67,8 @@ class EditActivity : AppCompatActivity(), OnMapReadyCallback {
                 date.text.toString(),
                 time.text.toString(),
                 location.text.toString(),
-                reminder?.latitude ?: 0.0, // mantém a latitude original se não for alterada
-                reminder?.longitude ?: 0.0 // mantém a longitude original se não for alterada
+                reminder?.latitude ?: 0.0,
+                reminder?.longitude ?: 0.0
             )
             reminderRepository.update(updatedReminder)
             finish()
