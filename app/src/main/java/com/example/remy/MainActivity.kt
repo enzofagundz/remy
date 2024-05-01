@@ -1,8 +1,6 @@
 package com.example.remy
 
 import android.Manifest
-import android.app.Notification
-import android.app.NotificationManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
@@ -19,53 +17,66 @@ import com.google.android.gms.location.LocationServices
 
 class MainActivity : AppCompatActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
+    private var currentLocation: Location? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
+        requestLocationPermission()
+        setupFusedLocationClient()
+        getLastKnownLocation()
+
+        setupUI()
+    }
+
+    private fun requestLocationPermission() {
         val locationPermissionRequest = registerForActivityResult(
-            ActivityResultContracts.RequestPermission(
-            )
+            ActivityResultContracts.RequestPermission()
         ) { isGranted: Boolean ->
             if (isGranted) {
-                // Precise location access granted.
                 Toast.makeText(this, "Precise location access granted.", Toast.LENGTH_LONG).show()
             } else {
-                // No location access granted.
                 Toast.makeText(this, "No location access granted.", Toast.LENGTH_LONG).show()
             }
         }
-
         locationPermissionRequest.launch(Manifest.permission.ACCESS_FINE_LOCATION)
+    }
 
+    private fun setupFusedLocationClient() {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+    }
 
+    private fun getLastKnownLocation() {
         if (ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+            ) == PackageManager.PERMISSION_GRANTED &&
+            ActivityCompat.checkSelfPermission(
                 this,
                 Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
+            ) == PackageManager.PERMISSION_GRANTED
         ) {
-            ActivityCompat.requestPermissions(
-                this,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),
-                1
-            )
-            return
-        }
+            fusedLocationClient.lastLocation
+                .addOnSuccessListener { location ->
+                    if (location != null) {
+                        currentLocation?.latitude = location.latitude
+                        currentLocation?.longitude = location.longitude
 
-        fusedLocationClient.lastLocation
-            .addOnSuccessListener { location ->
-                // Got last known location. In some rare situations this can be null.
-                if (location != null) {
-                    Toast.makeText(this, "Latitude: ${location.latitude}, Longitude: ${location.longitude}", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            this,
+                            "Latitude: ${location.latitude}, Longitude: ${location.longitude}",
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
-            }
 
+            checkDistanceOfReminders()
+        }
+    }
+
+    private fun setupUI() {
         val btnIndex: Button = findViewById(R.id.index)
         val btnCreate: Button = findViewById(R.id.create)
 
@@ -77,6 +88,31 @@ class MainActivity : AppCompatActivity() {
         btnCreate.setOnClickListener {
             val intent = Intent(this, CreateActivity::class.java)
             startActivity(intent)
+        }
+    }
+
+    private fun checkDistanceOfReminders() {
+        val reminderRepository = ReminderRepository(this)
+        val reminders = reminderRepository.index()
+
+        if (reminders.isEmpty()) return
+
+        for (reminder in reminders) {
+            // Calculate distance between reminder and current location
+
+            val reminderLocation = Location("reminder")
+            reminderLocation.latitude = reminder.latitude
+            reminderLocation.longitude = reminder.longitude
+
+            val distance = currentLocation?.distanceTo(reminderLocation)
+            if (distance != null && distance < 100) {
+                // Notify user
+                Toast.makeText(
+                    this,
+                    "You are near ${reminder.title}.",
+                    Toast.LENGTH_LONG
+                ).show()
+            }
         }
     }
 }

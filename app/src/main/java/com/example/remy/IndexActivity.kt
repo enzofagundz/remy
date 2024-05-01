@@ -26,23 +26,8 @@ class IndexActivity : AppCompatActivity() {
 
         val reminderRepository = ReminderRepository(this)
         val reminders = reminderRepository.index()
-        if (reminders.isEmpty()) {
-            val reminder = Reminder(
-                title = "Comprar pão",
-                description = "Pão francês",
-                date = "2021-09-01",
-                time = "08:00",
-                location = "Padaria",
-                latitude = -23.5505199,
-                longitude = -46.6333094
-            )
 
-            reminderRepository.create(reminder)
-        }
-
-        // inserir os reminders.toArray() no ListView
         val listView = findViewById<ListView>(R.id.listView)
-//        val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, reminders)
         val adapter = ReminderAdapter(this, reminders)
         listView.adapter = adapter
 
